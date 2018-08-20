@@ -27,10 +27,10 @@ def conv_block(input, config, needs):
 def pooling_block(input, config, needs):
     layer_index = needs[0]
     layer_name = 'pool' + str(layer_index)
-    window_shape, pooling_type, padding = parse_config('pool', config)
+    window_shape, pooling_type, padding, stride = parse_config('pool', config)
 
     with tf.name_scope(layer_name):
-        output = tf.nn.pool(input, window_shape, pooling_type, padding)
+        output = tf.nn.pool(input, window_shape, pooling_type, padding, strides=stride)
     return output
 
 def fc_block():

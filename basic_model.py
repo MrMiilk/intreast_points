@@ -12,46 +12,46 @@ class Basic_model():
     default_encoder_config = [
         [#block
             #for variable_param
-            [(3, 3, 1, 64), (64,)],
+            [(3, 3, 3, 64), (64,)],
             #for layer_param
-            ['relu', (1, 2, 2, 1), 'SAME', True]
+            ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
         [
             [(3, 3, 64, 64), (64,)],
-            ['relu', (1, 2, 2, 1), 'SAME', True]
+            ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
         [#max_pooling
-            (2, 2), 'MAX', 'VALID'
+            (2, 2), 'MAX', 'SAME', [2, 2]
         ],
         [
             [(3, 3, 64, 64), (64,)],
-            ['relu', (1, 2, 2, 1), 'SAME', True]
+            ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
         [
             [(3, 3, 64, 64), (64,)],
-            ['relu', (1, 2, 2, 1), 'SAME', True]
+            ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
         [  # max_pooling
-            (2, 2), 'MAX', 'VALID'
+            (2, 2), 'MAX', 'SAME', [2, 2]
         ],
         [
             [(3, 3, 64, 128), (128,)],
-            ['relu', (1, 2, 2, 1), 'SAME', True]
+            ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
         [
             [(3, 3, 128, 128), (128,)],
-            ['relu', (1, 2, 2, 1), 'SAME', True]
+            ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
         [  # max_pooling
-            (2, 2), 'MAX', 'VALID'
+            (2, 2), 'MAX', 'SAME', [2, 2]
         ],
         [
             [(3, 3, 128, 128), (128,)],
-            ['relu', (1, 2, 2, 1), 'SAME', True]
+            ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
         [
             [(3, 3, 128, 128), (128,)],
-            ['relu', (1, 2, 2, 1), 'SAME', True]
+            ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
     ]
 
@@ -97,6 +97,7 @@ class Basic_model():
                 if layers[l] == 'pool':
                     needs = [l, ]
                     x = pooling_block(x, config[l], needs)
+                print(x)
         self.encoder_output = x
 
     def define_loss(self):
@@ -105,9 +106,9 @@ class Basic_model():
     def Lp(self, logits, labels):
         labels = tf.to_float(labels)
         # W, H = self.H_W
-        print(labels)
-        print(logits)
-        print(self.encoder_output)
+        # print(labels)
+        # print(logits)
+        # print(self.encoder_output)
         loss = tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=logits)
         return loss
 
@@ -116,7 +117,7 @@ class Basic_model():
         pass
 
 if __name__ == '__main__':
-    input_shape = [None, 240, 320, 1]
+    input_shape = [None, 240, 320, 3]
     label_shape = []
     model = Basic_model()
     with tf.Session() as sess:
