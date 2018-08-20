@@ -5,6 +5,7 @@ from tests_bins import *
 
 
 class Magic_point(Basic_model):
+    '''Magic Point检测器，下面两个依旧是默认的网络建立方式'''
     default_decoder_layer = ['conv', 'conv']
     default_decoder_config = [
         [
@@ -18,10 +19,7 @@ class Magic_point(Basic_model):
     ]
 
     def create_decode_head(self, layer=default_decoder_layer, config=default_decoder_config):
-        '''
-        特征点检测头
-        :return:
-        '''
+        '''特征点检测头，根据参数搭建'''
         with tf.name_scope('Point_decoder'):
             x = self.encoder_output
             for l in range(len(layer)):
@@ -31,46 +29,51 @@ class Magic_point(Basic_model):
         self.decoder_output = x
 
     def define_loss(self):
+        '''定义损失函数计算，Lp需要修改'''
         H, W = self.H_W
         self.loss = (1. / W * H) * tf.reduce_sum(self.Lp(self.decoder_output, self.label))
 
     def model(self, input_shape, label_shape, opt, lr=1e-3):
         '''define how to build model'''
+        ##TODO:定义网络，使用"Ctrl + 点击函数名"查看函数##
         self.set_inputs(input_shape, label_shape)
         self.create_encoder()
         self.create_decode_head()
         self.define_loss()
 
+        ##TODO：选择优化器##
         if opt == 'adam':
             self.optimzer = AdamOptimizer(learning_rate=lr)
         elif opt == 'sgd':
             self.optimzer = GradientDescentOptimizer(learning_rate=lr)
+        ##TODO：一次训练迭代操作##
         self.train_op = self.optimzer.minimize(self.loss)
 
 
 
 if __name__ == '__main__':
+    '''Magic Point运行检测'''
     input_shape = [None, 240, 320, 3]
     label_shape = [None, 30, 40, 65]
-    epoch = 1000
+    epoch = 1000                      # 迭代的epoch
     batch_size = 16
     opt = 'sgd'
 
     Model = Magic_point()
     with tf.Session() as sess:
         # initer = [tf.global_variables_initializer(), tf.local_variables_initializer()]
-        Model.model(input_shape, label_shape, opt)
-        writer = tf.summary.FileWriter('logs/', sess.graph)
-        sess.run(tf.initialize_all_variables())
-        for i in range(epoch):
+        Model.model(input_shape, label_shape, opt)               # 定义模型
+        writer = tf.summary.FileWriter('logs/', sess.graph)      # 写入logs文件
+        sess.run(tf.initialize_all_variables())                  # 初始化网络
+        for i in range(epoch):                                   # 迭代
             for X, labels in get_batch(batch_size, 1000):
                 # print(type(X), type(labels))
                 feed_dict = {
                     Model.inputs: X,
                     Model.label: labels,
                     Model.training: 1,
-                }
-                sess.run(Model.train_op, feed_dict=feed_dict)
+                }                               # 输入数据填充占位
+                sess.run(Model.train_op, feed_dict=feed_dict)   # 向前运行一次网络
 
 
 
