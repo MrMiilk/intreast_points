@@ -18,9 +18,9 @@ def conv_block(input, config, needs):
         with tf.name_scope('conv'):
             x = tf.nn.conv2d(input, filter, stride, padding) + bias
             output = getattr(tf.nn, nolinear_func)(x)
-        if use_bn:
-            with tf.name_scope('batch_normalization'):
-                output = tf.layers.batch_normalization(output, training=training)
+    if use_bn:
+        with tf.variable_scope('batch_normalization', reuse=tf.AUTO_REUSE):
+            output = tf.layers.batch_normalization(output, training=training, name='bn' + str(layer_index))
     return output
 
 
