@@ -74,6 +74,3 @@ if __name__ == '__main__':
                     Model.training: 1,
                 }                               # 输入数据填充占位
                 sess.run(Model.train_op, feed_dict=feed_dict)   # 向前运行一次网络
-
-
-

@@ -16,7 +16,8 @@
 		- <image src='net.png' width='400px'>
 		- loss function 还没有使用和论文一样的形式
 		- 按照原论文，特征点位置只能是某个确定的像素位置，而像SIFT等应该可以是像素点之间的位置
-	- H-Patches的数据集使用
+		- 建立从H*W-->(H/8)*(W/8)*65-->`ing`
+	- H-Patches的数据集使用  -->`ing`
 	- 同型适应方法
 - ...
 

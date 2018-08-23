@@ -12,6 +12,7 @@ FILE_PATH2 = "training//"
 H, W, C = 30, 40, 65
 
 def get_batch(batch_size, iter=100):
+    '''测试输入数据'''
     file_list = os.walk(FILE_PATH)
     # lile_list2 = os.walk(FILE_PATH2)
     files = []
