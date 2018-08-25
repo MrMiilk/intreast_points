@@ -17,6 +17,7 @@ class Magic_point(Basic_model):
             ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
     ]
+    default_reshape_config = []
 
     def create_decode_head(self, layer=default_decoder_layer, config=default_decoder_config):
         '''特征点检测头，根据参数搭建'''
@@ -28,20 +29,34 @@ class Magic_point(Basic_model):
                     x = conv_block(x, config[l], needs)
         self.decoder_output = x
 
+    def reshape_output(self, config=default_reshape_config):
+        '''最后从(H/8)*(W/8)*65-->H*W*1'''
+        x = self.decoder_output
+        with tf.name_scope('Reshape_output'):
+            x = tf.nn.softmax(x, axis=-1)
+            x = x[..., :-1]
+            self.point_position = tf.depth_to_space(x, block_size=8)
+            print('check point_position: ', self.point_position)
+        return
+
     def define_loss(self):
         '''定义损失函数计算，Lp需要修改'''
-        H, W = self.H_W
-        self.loss = (1. / W * H) * tf.reduce_sum(self.Lp(self.decoder_output, self.label))
+        with tf.name_scope('Loss'):
+            H, W = self.H_W
+            self.loss = (1. / W * H) * tf.reduce_sum(self.Lp(self.decoder_output, self.label))
+        return
 
-    def model(self, input_shape, label_shape, opt, lr=1e-3):
+    def model(self, input_shape, label_shape, opt, lr=1e-3, training=True):
         '''define how to build model'''
         ##TODO:定义网络，使用"Ctrl + 点击函数名"查看函数##
         self.set_inputs(input_shape, label_shape)
         self.create_encoder()
         self.create_decode_head()
+        if training:
+            self.reshape_output()
         self.define_loss()
 
-        ##TODO：选择优化器##
+        ##TODO：选择优化器， 优化器参数完善##
         if opt == 'adam':
             self.optimzer = AdamOptimizer(learning_rate=lr)
         elif opt == 'sgd':
