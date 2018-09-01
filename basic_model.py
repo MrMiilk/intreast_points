@@ -80,6 +80,7 @@ class Basic_model():
             self.inputs = tf.placeholder(dtype=tf.float32, shape=input_shape, name='input')
             self.training = tf.placeholder(dtype=tf.bool, name='training')
             self.label = tf.placeholder(dtype=tf.float32, shape=label_shape, name='label')
+            self.label = sample_label(self.label)
         return
 
     def create_encoder(self):
@@ -121,15 +122,3 @@ class Basic_model():
     def model(self, input_shape, label_shape, opt):
         '''define how to build model，在不同的网络会具体完成'''
         pass
-
-if __name__ == '__main__':
-    '''检查Basic Dector，随着网络搭建，不一定能成功运行'''
-    input_shape = [None, 240, 320, 3]
-    label_shape = [None, 30, 40, 65]
-    model = Basic_model()
-    with tf.Session() as sess:
-        initializer = tf.global_variables_initializer()
-        sess.run(initializer)
-        model.set_inputs(input_shape, label_shape)
-        model.create_encoder()
-        writer = tf.summary.FileWriter('logs/', sess.graph)

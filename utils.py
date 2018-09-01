@@ -69,12 +69,13 @@ def fc_block():
 def sample_label(input, config=None, needs=None):
     '''从H*W-->(H/8)*(W/8)*65'''
     # H, W, C = parse_config('sample_conv', config)
-    x = tf.space_to_depth(input, block_size=8)
-    paddings = tf.constant([
-        [0, 0],
-        [0, 0],
-        [0, 0],
-        [0, 1]
-    ])
-    output = tf.pad(x, paddings=paddings)
+    with tf.name_scope("label_reshape"):
+        x = tf.space_to_depth(input, block_size=8)
+        paddings = tf.constant([
+            [0, 0],
+            [0, 0],
+            [0, 0],
+            [0, 1]
+        ])
+        output = tf.pad(x, paddings=paddings)
     return output

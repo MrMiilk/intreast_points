@@ -1,7 +1,7 @@
 from basic_model import Basic_model
 from utils import *
 from tensorflow.train import AdamOptimizer, GradientDescentOptimizer
-from tests_bins import *
+from tests.tests_bins import *
 
 
 class Magic_point(Basic_model):
@@ -52,9 +52,10 @@ class Magic_point(Basic_model):
         self.set_inputs(input_shape, label_shape)
         self.create_encoder()
         self.create_decode_head()
-        if training:
+        if not training:
             self.reshape_output()
-        self.define_loss()
+        else:
+            self.define_loss()
 
         ##TODO：选择优化器， 优化器参数完善##
         if opt == 'adam':
@@ -69,7 +70,7 @@ class Magic_point(Basic_model):
 if __name__ == '__main__':
     '''Magic Point运行检测'''
     input_shape = [None, 240, 320, 3]
-    label_shape = [None, 30, 40, 65]
+    label_shape = [None, 240, 320, 1]
     epoch = 1000                      # 迭代的epoch
     batch_size = 16
     opt = 'sgd'
@@ -79,13 +80,13 @@ if __name__ == '__main__':
         # initer = [tf.global_variables_initializer(), tf.local_variables_initializer()]
         Model.model(input_shape, label_shape, opt)               # 定义模型
         writer = tf.summary.FileWriter('logs/', sess.graph)      # 写入logs文件
-        sess.run(tf.initialize_all_variables())                  # 初始化网络
-        for i in range(epoch):                                   # 迭代
-            for X, labels in get_batch(batch_size, 1000):
-                # print(type(X), type(labels))
-                feed_dict = {
-                    Model.inputs: X,
-                    Model.label: labels,
-                    Model.training: 1,
-                }                               # 输入数据填充占位
-                sess.run(Model.train_op, feed_dict=feed_dict)   # 向前运行一次网络
+        # sess.run(tf.initialize_all_variables())                  # 初始化网络
+        # for i in range(epoch):                                   # 迭代
+        #     for X, labels in get_batch(batch_size, 1000):
+        #         # print(type(X), type(labels))
+        #         feed_dict = {
+        #             Model.inputs: X,
+        #             Model.label: labels,
+        #             Model.training: 1,
+        #         }                               # 输入数据填充占位
+        #         sess.run(Model.train_op, feed_dict=feed_dict)   # 向前运行一次网络
