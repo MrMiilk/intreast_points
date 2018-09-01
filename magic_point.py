@@ -1,7 +1,7 @@
 from basic_model import Basic_model
 from utils import *
 from tensorflow.train import AdamOptimizer, GradientDescentOptimizer
-from tests.tests_bins import *
+from datasets.synthetic_shapes import *
 
 
 class Magic_point(Basic_model):
@@ -80,13 +80,13 @@ if __name__ == '__main__':
         # initer = [tf.global_variables_initializer(), tf.local_variables_initializer()]
         Model.model(input_shape, label_shape, opt)               # 定义模型
         writer = tf.summary.FileWriter('logs/', sess.graph)      # 写入logs文件
-        # sess.run(tf.initialize_all_variables())                  # 初始化网络
-        # for i in range(epoch):                                   # 迭代
-        #     for X, labels in get_batch(batch_size, 1000):
-        #         # print(type(X), type(labels))
-        #         feed_dict = {
-        #             Model.inputs: X,
-        #             Model.label: labels,
-        #             Model.training: 1,
-        #         }                               # 输入数据填充占位
-        #         sess.run(Model.train_op, feed_dict=feed_dict)   # 向前运行一次网络
+        sess.run(tf.initialize_all_variables())                  # 初始化网络
+        for i in range(epoch):                                   # 迭代
+            for X, labels in get_batch(batch_size, 1000):
+                # print(type(X), type(labels))
+                feed_dict = {
+                    Model.inputs: X,
+                    Model.label: labels,
+                    Model.training: 1,
+                }                               # 输入数据填充占位
+                sess.run(Model.train_op, feed_dict=feed_dict)   # 向前运行一次网络
