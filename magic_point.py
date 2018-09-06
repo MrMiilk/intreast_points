@@ -36,7 +36,7 @@ class Magic_point(Basic_model):
             x = tf.nn.softmax(x, axis=-1)
             x = x[..., :-1]
             self.point_position = tf.depth_to_space(x, block_size=8)
-            print('check point_position: ', self.point_position)
+            # print('check point_position: ', self.point_position)
         return
 
     def define_loss(self):
@@ -44,9 +44,10 @@ class Magic_point(Basic_model):
         with tf.name_scope('Loss'):
             H, W = self.H_W
             self.loss = (1. / W * H) * tf.reduce_sum(self.Lp(self.decoder_output, self.label))
+            tf.summary.scalar('Loss', self.loss)
         return
 
-    def model(self, input_shape, label_shape, opt, lr=1e-3, training=True):
+    def model(self, input_shape, label_shape, opt, lr=1e-4, training=True):
         '''define how to build model'''
         ##TODO:定义网络，使用"Ctrl + 点击函数名"查看函数##
         self.set_inputs(input_shape, label_shape)
@@ -63,7 +64,7 @@ class Magic_point(Basic_model):
         elif opt == 'sgd':
             self.optimzer = GradientDescentOptimizer(learning_rate=lr)
         ##TODO：一次训练迭代操作##
-        self.train_op = self.optimzer.minimize(self.loss)
+        self.train_op = self.optimzer.minimize(self.loss, global_step=self.global_step)
 
 
 
@@ -79,14 +80,21 @@ if __name__ == '__main__':
     with tf.Session() as sess:
         # initer = [tf.global_variables_initializer(), tf.local_variables_initializer()]
         Model.model(input_shape, label_shape, opt)               # 定义模型
-        writer = tf.summary.FileWriter('logs/', sess.graph)      # 写入logs文件
         sess.run(tf.initialize_all_variables())                  # 初始化网络
+        merged = tf.summary.merge_all()
+        writer = tf.summary.FileWriter('logs/', sess.graph)  # 写入logs文件
+        stepts = 0
         for i in range(epoch):                                   # 迭代
             for X, labels in get_batch(batch_size, 1000):
                 # print(type(X), type(labels))
+                stepts += 1
                 feed_dict = {
                     Model.inputs: X,
-                    Model.label: labels,
+                    Model.label_input: labels,
                     Model.training: 1,
                 }                               # 输入数据填充占位
                 sess.run(Model.train_op, feed_dict=feed_dict)   # 向前运行一次网络
+
+                if stepts % 50 == 0:
+                    rs = sess.run(merged, feed_dict=feed_dict)
+                    writer.add_summary(rs, i)

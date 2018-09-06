@@ -15,6 +15,8 @@ def conv_block(input, config, needs):
         with tf.variable_scope('Variables', reuse=tf.AUTO_REUSE):
             filter = tf.get_variable(name='filter'+str(layer_name), shape=filter_shape, initializer=initializer)
             bias = tf.get_variable(name='bias'+str(layer_name), shape=bias_shape, initializer=tf.zeros_initializer)
+            tf.summary.histogram('filter'+str(layer_name), filter)
+            tf.summary.histogram('bias'+str(layer_name), bias)
         with tf.name_scope('conv'):
             x = tf.nn.conv2d(input, filter, stride, padding) + bias
             output = getattr(tf.nn, nolinear_func)(x)

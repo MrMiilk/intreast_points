@@ -16,8 +16,11 @@ def get_batch(batch_size, iter=100):
         files.extend(file[-1])
     num_batches = len(files)//batch_size
     for _ in range(iter):
-        idxs = np.random.shuffle(np.arange(num_batches*batch_size)).reshape((num_batches, -1))
-        lab = np.zeros((batch_size, H/8, W/8, C))
+        idxs = np.arange(num_batches*batch_size)
+        np.random.shuffle(idxs)
+        idxs = idxs.reshape((num_batches, -1))
+        # print(H, W, C)
+        lab = np.zeros((batch_size, H, W, C))
         X = np.zeros((batch_size, H, W, 3))
         for j in range(num_batches):
             batch = idxs[j]
@@ -25,8 +28,17 @@ def get_batch(batch_size, iter=100):
                 tmp = Path(SYMTHETIC_FILE_PATH, str(idx)+".npy")
                 tmp2 = SYMTHETIC_FILE_PATH2 + str(idx)+".png"
                 with open(tmp, 'rb') as f:
-                    arr = np.transpose(np.load(f), [1, 2, 0])
+                    points = np.array(np.load(f) + 0.5, dtype=np.int)
+                    img = np.zeros((240, 320, 1))
+                    for point in points:
+                        cv2.circle(img, tuple(point), 0, (1,))
                 grayImage = cv2.imread(tmp2)
-                lab[i] = arr
+                lab[i] = img
                 X[i] = grayImage
             yield X, lab
+
+
+if __name__ == '__main__':
+    for X, lab in get_batch(3, 3):
+        # print(X, lab)
+        pass

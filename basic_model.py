@@ -69,6 +69,7 @@ class Basic_model():
         self.target = None
         self.loss = None                       # 损失函数
         self.optimzer = None                   # 优化器
+        self.global_step = tf.Variable(0, trainable=False)
         self.initializer = tf.random_normal_initializer() # 网络权重初始化方法，正太分布
 
     def set_inputs(self, input_shape, label_shape):
@@ -79,8 +80,8 @@ class Basic_model():
         with tf.name_scope('Input'):
             self.inputs = tf.placeholder(dtype=tf.float32, shape=input_shape, name='input')
             self.training = tf.placeholder(dtype=tf.bool, name='training')
-            self.label = tf.placeholder(dtype=tf.float32, shape=label_shape, name='label')
-            self.label = sample_label(self.label)
+            self.label_input = tf.placeholder(dtype=tf.float32, shape=label_shape, name='label')
+            self.label = sample_label(self.label_input)
         return
 
     def create_encoder(self):
