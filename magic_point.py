@@ -83,6 +83,7 @@ if __name__ == '__main__':
         sess.run(tf.initialize_all_variables())                  # 初始化网络
         merged = tf.summary.merge_all()
         writer = tf.summary.FileWriter('logs/', sess.graph)  # 写入logs文件
+        saver = tf.train.Saver(max_to_keep=2)
         stepts = 0
         for i in range(epoch):                                   # 迭代
             for X, labels in get_batch(batch_size, 1000):
@@ -98,3 +99,6 @@ if __name__ == '__main__':
                 if stepts % 50 == 0:
                     rs = sess.run(merged, feed_dict=feed_dict)
                     writer.add_summary(rs, i)
+
+                if stepts % 500 == 0:
+                    saver.save(sess, SAVE_PATH, global_step=stepts)

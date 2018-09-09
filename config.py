@@ -4,6 +4,9 @@ W = 320
 C = 1
 
 
-##Dataset path##
-SYMTHETIC_FILE_PATH2 = 'D:\\projects\\superpoint\\read_notes\\datas\\draw_cube\\images\\validation\\'
-SYMTHETIC_FILE_PATH = 'D:\\projects\\superpoint\\read_notes\\datas\\draw_cube\\points\\validation'
+##Synthetic Dataset path##
+POINT_PATH = "/points/training/"
+IMAGE_PATH = "images/training/"
+SYMTHETIC_FILE_PATH = 'DATASETS/synthetic_dataset'
+# SYMTHETIC_FILE_PATH = 'data'
+SAVE_PATH = './checkpoints/'

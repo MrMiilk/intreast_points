@@ -10,31 +10,29 @@ def get_batch(batch_size, iter=100):
     角点位置有很多是小数，这里使用最近邻的整数作为角点位置
     """
     ##TODO: 使用CPU生成图形，GPU运行网络##
-    file_list = os.walk(SYMTHETIC_FILE_PATH)
-    files = []
-    for file in file_list:
-        files.extend(file[-1])
-    num_batches = len(files)//batch_size
+    type_list = list(os.listdir(SYMTHETIC_FILE_PATH))
+    num_types = len(type_list)
+    num_batches = 10000//batch_size
     for _ in range(iter):
         idxs = np.arange(num_batches*batch_size)
         np.random.shuffle(idxs)
         idxs = idxs.reshape((num_batches, -1))
-        # print(H, W, C)
-        lab = np.zeros((batch_size, H, W, C))
-        X = np.zeros((batch_size, H, W, 3))
+        lab = np.zeros((batch_size * num_types, H, W, C))
+        X = np.zeros((batch_size * num_types, H, W, 3))
         for j in range(num_batches):
             batch = idxs[j]
             for i, idx in enumerate(batch):
-                tmp = Path(SYMTHETIC_FILE_PATH, str(idx)+".npy")
-                tmp2 = SYMTHETIC_FILE_PATH2 + str(idx)+".png"
-                with open(tmp, 'rb') as f:
-                    points = np.array(np.load(f) + 0.5, dtype=np.int)
-                    img = np.zeros((240, 320, 1))
-                    for point in points:
-                        cv2.circle(img, tuple(point), 0, (1,))
-                grayImage = cv2.imread(tmp2)
-                lab[i] = img
-                X[i] = grayImage
+                for idx_t, t in enumerate(type_list):
+                    point_path = Path(Path(SYMTHETIC_FILE_PATH, t, POINT_PATH), str(idx) + ".npy")
+                    img_path = SYMTHETIC_FILE_PATH + '/' + t + '/' + IMAGE_PATH + str(idx) + ".png"
+                    with open(point_path, 'rb') as f:
+                        points = np.array(np.load(f) + 0.5, dtype=np.int)
+                        img = np.zeros((240, 320, 1))
+                        for point in points:
+                            cv2.circle(img, tuple(point), 0, (1,))
+                    grayImage = cv2.imread(img_path)
+                    lab[i * idx_t] = img
+                    X[i * idx_t] = grayImage
             yield X, lab
 
 
