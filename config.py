@@ -5,7 +5,7 @@ C = 1
 
 
 ##Synthetic Dataset path##
-POINT_PATH = "/points/training/"
+POINT_PATH = "points/training/"
 IMAGE_PATH = "images/training/"
 SYMTHETIC_FILE_PATH = 'DATASETS/synthetic_dataset'
 # SYMTHETIC_FILE_PATH = 'data'
