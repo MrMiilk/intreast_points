@@ -97,8 +97,9 @@ if __name__ == '__main__':
                 sess.run(Model.train_op, feed_dict=feed_dict)   # 向前运行一次网络
 
                 if stepts % 50 == 0:
-                    rs = sess.run(merged, feed_dict=feed_dict)
+                    rs, loss = sess.run((merged, Model.loss), feed_dict=feed_dict)
                     writer.add_summary(rs, i)
+                    print('In step {}, loss:{}'.format(stepts, loss))
 
                 if stepts % 500 == 0:
                     saver.save(sess, SAVE_PATH, global_step=stepts)
