@@ -5,7 +5,7 @@ import cv2
 
 from config import *
 
-def get_batch(batch_size, iter=100):
+def get_batch(batch_size, iter=100, img_p=IMAGE_PATH, pot_p=POINT_PATH):
     """生成器提供数据输入
     角点位置有很多是小数，这里使用最近邻的整数作为角点位置
     """
@@ -26,8 +26,8 @@ def get_batch(batch_size, iter=100):
                 batch = idxs[j]
                 for i, idx in enumerate(batch):
                     for idx_t, t in enumerate(type_list):
-                        point_path = Path(Path(SYMTHETIC_FILE_PATH, t, POINT_PATH), str(idx) + ".npy")
-                        img_path = SYMTHETIC_FILE_PATH + '/' + t + '/' + IMAGE_PATH + str(idx) + ".png"
+                        point_path = Path(Path(SYMTHETIC_FILE_PATH, t, pot_p), str(idx) + ".npy")
+                        img_path = SYMTHETIC_FILE_PATH + '/' + t + '/' + img_p + str(idx) + ".png"
                         with open(point_path, 'rb') as f:
                             points = np.array(np.load(f) + 0.5, dtype=np.int)
                             img = np.zeros((240, 320, 1))

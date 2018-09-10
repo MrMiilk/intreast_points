@@ -10,3 +10,6 @@ IMAGE_PATH = "images/training/"
 SYMTHETIC_FILE_PATH = 'DATASETS/synthetic_dataset'
 # SYMTHETIC_FILE_PATH = 'data'
 SAVE_PATH = './checkpoints/'
+
+TEST_POINT_PATH = "points/validation"
+TEST_IMAGE_PATH = "images/validation/"

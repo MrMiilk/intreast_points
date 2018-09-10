@@ -55,8 +55,7 @@ class Magic_point(Basic_model):
         self.create_decode_head()
         if not training:
             self.reshape_output()
-        else:
-            self.define_loss()
+        self.define_loss()
 
         ##TODO：选择优化器， 优化器参数完善##
         if opt == 'adam':
@@ -65,7 +64,6 @@ class Magic_point(Basic_model):
             self.optimzer = GradientDescentOptimizer(learning_rate=lr)
         ##TODO：一次训练迭代操作##
         self.train_op = self.optimzer.minimize(self.loss, global_step=self.global_step)
-
 
 
 if __name__ == '__main__':

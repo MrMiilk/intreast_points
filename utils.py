@@ -72,12 +72,18 @@ def sample_label(input, config=None, needs=None):
     '''从H*W-->(H/8)*(W/8)*65'''
     # H, W, C = parse_config('sample_conv', config)
     with tf.name_scope("label_reshape"):
+        def func_(x):
+            h, w, _ = x.shape()
+            b = 1 - np.sum(x, axis=-1) > 0
+            return b
         x = tf.space_to_depth(input, block_size=8)
-        paddings = tf.constant([
-            [0, 0],
-            [0, 0],
-            [0, 0],
-            [0, 1]
-        ])
-        output = tf.pad(x, paddings=paddings)
+        # paddings = tf.constant([
+        #     [0, 0],
+        #     [0, 0],
+        #     [0, 0],
+        #     [0, 1]
+        # ])
+        # output = tf.pad(x, paddings=paddings)
+        b = tf.py_func(func_, x, tf.float32)
+        output = tf.concat([x, b], axis=-1)
     return output
