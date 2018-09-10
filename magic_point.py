@@ -71,8 +71,8 @@ if __name__ == '__main__':
     input_shape = [None, 240, 320, 3]
     label_shape = [None, 240, 320, 1]
     epoch = 1000                      # 迭代的epoch
-    batch_size = 16
-    opt = 'sgd'
+    batch_size = 14
+    opt = 'adam'
 
     Model = Magic_point()
     with tf.Session() as sess:
