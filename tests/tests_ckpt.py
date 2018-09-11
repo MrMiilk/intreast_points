@@ -1,3 +1,8 @@
+import sys
+import os
+
+path = "/home/int_point/"
+sys.path.append(path)
 from magic_point import *
 
 
@@ -22,14 +27,16 @@ def get_batch():
 
 
 if __name__ == '__main__':
+    tf.reset_default_graph()
     input_shape = [None, 240, 320, 3]
     label_shape = [None, 240, 320, 1]
-    batch_size = 4
-    ckpt_name = 'checkpoints/'
+    batch_size = 1
+    ckpt_name = 'checkpoints/-15000'
     Model = Magic_point()
     saver = tf.train.Saver()
     Model.model(input_shape, label_shape, opt='adam', lr=0.001, training=False)
     with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
         saver.restore(sess, ckpt_name)
         loss = 0.
         for X, label, idx, type_, gray_img in get_batch():
