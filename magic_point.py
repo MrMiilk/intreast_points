@@ -31,9 +31,14 @@ class Magic_point(Basic_model):
 
     def reshape_output(self, config=default_reshape_config):
         '''最后从(H/8)*(W/8)*65-->H*W*1'''
+        def func_(x):
+            sign = np.max(x, axis=-1, keepdims=True)
+            res = x == sign
+            return np.array(x, dtype=np.float32)
         x = self.decoder_output
         with tf.name_scope('Reshape_output'):
             x = tf.nn.softmax(x, axis=-1)
+            x = tf.py_func(func_, [x], tf.float32)
             x = x[..., :-1]
             self.point_position = tf.depth_to_space(x, block_size=8)
             # print('check point_position: ', self.point_position)
