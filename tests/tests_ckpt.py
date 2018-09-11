@@ -52,5 +52,7 @@ if __name__ == '__main__':
             point_position = np.vstack(np.nonzero(point_position)).T
             for point in point_position:
                 cv2.circle(gray_img, tuple(point), 0, (1,))
-            cv2.imwrite(str(Path('./test_outputs/' + type_, '{}.png'.format(i))), gray_img)
+            if not os.path.exists('./imgs/' + type_):
+                os.makedirs('./imgs/' + type_)
+            cv2.imwrite('./imgs/' + type_ + '/' + '{}.png'.format(idx), gray_img)
             loss += loss_now # 好像没什么意义
