@@ -34,7 +34,7 @@ class Magic_point(Basic_model):
         def func_(x):
             sign = np.max(x, axis=-1, keepdims=True)
             res = x == sign
-            return np.array(x, dtype=np.float32)
+            return np.array(res, dtype=np.float32)
         x = self.decoder_output
         with tf.name_scope('Reshape_output'):
             x = tf.nn.softmax(x, axis=-1)
