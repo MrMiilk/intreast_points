@@ -41,7 +41,7 @@ if __name__ == '__main__':
         loss = 0.
         for X, label, idx, type_, gray_img in get_batch():
             feed_dict = {
-                Model.inputs: X[..., 0],
+                Model.inputs: np.expand_dims(X[..., 0], axis=-1),
                 Model.label_input: label,
                 Model.training: 0,
             }

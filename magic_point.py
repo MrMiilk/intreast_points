@@ -27,6 +27,7 @@ class Magic_point(Basic_model):
                 if layer[l] == 'conv':
                     needs = [20+l, self.initializer, self.training]
                     x = conv_block(x, config[l], needs)
+        x = tf.nn.softmax(x, axis=-1)
         self.decoder_output = x
 
     def reshape_output(self, config=default_reshape_config):
@@ -37,7 +38,7 @@ class Magic_point(Basic_model):
             return np.array(res, dtype=np.float32)
         x = self.decoder_output
         with tf.name_scope('Reshape_output'):
-            x = tf.nn.softmax(x, axis=-1)
+            # x = tf.nn.softmax(x, axis=-1)
             x = tf.py_func(func_, [x], tf.float32)
             x = x[..., :-1]
             self.point_position = tf.depth_to_space(x, block_size=8)
@@ -94,7 +95,7 @@ if __name__ == '__main__':
                 # print(type(X), type(labels))
                 stepts += 1
                 feed_dict = {
-                    Model.inputs: X[..., 0],
+                    Model.inputs: np.expand_dims(X[..., 0], axis=-1),
                     Model.label_input: labels,
                     Model.training: 1,
                 }                               # 输入数据填充占位
