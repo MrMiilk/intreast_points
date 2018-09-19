@@ -110,7 +110,7 @@ class Basic_model():
 
     def Lp(self, logits, labels):
         '''论文使用的符号，特征点位置检测的损失函数'''
-        ##TODO:需要修改，目前是交叉熵损失##
+        ##目前是交叉熵损失##
         labels = tf.to_float(labels)
         loss = tf.nn.softmax_cross_entropy_with_logits(labels=labels, logits=logits)
         return loss

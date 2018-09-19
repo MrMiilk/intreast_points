@@ -9,7 +9,6 @@ def get_batch(batch_size, iter=100, img_p=IMAGE_PATH, pot_p=POINT_PATH):
     """生成器提供数据输入
     角点位置有很多是小数，这里使用最近邻的整数作为角点位置
     """
-    ##TODO: 使用CPU生成图形，GPU运行网络##
     type_lists = list(os.listdir(SYMTHETIC_FILE_PATH))
     class_per_time = 2
     num_types = len(type_lists)
@@ -36,10 +35,13 @@ def get_batch(batch_size, iter=100, img_p=IMAGE_PATH, pot_p=POINT_PATH):
                         grayImage = cv2.imread(img_path)
                         lab[i * idx_t] = img
                         X[i * idx_t] = grayImage
+                        # cv2.imshow('', img)
+                        # cv2.waitKey()
                 yield X, lab
 
 
 if __name__ == '__main__':
     for X, lab in get_batch(3, 3):
-        # print(X, lab)
+        print(X.shape, lab.shape)
+        print(np.all(X[0, :, :, 0]==X[0,:,:,1]))
         pass

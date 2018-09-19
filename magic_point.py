@@ -73,16 +73,17 @@ class Magic_point(Basic_model):
 
 if __name__ == '__main__':
     '''Magic Point运行检测'''
-    input_shape = [None, 240, 320, 3]
+    input_shape = [None, 240, 320, 1]
     label_shape = [None, 240, 320, 1]
     epoch = 1000                      # 迭代的epoch
     batch_size = 14
+    lr = 0.001
     opt = 'adam'
 
     Model = Magic_point()
     with tf.Session() as sess:
         # initer = [tf.global_variables_initializer(), tf.local_variables_initializer()]
-        Model.model(input_shape, label_shape, opt)               # 定义模型
+        Model.model(input_shape, label_shape, opt, lr=lr)               # 定义模型
         sess.run(tf.initialize_all_variables())                  # 初始化网络
         merged = tf.summary.merge_all()
         writer = tf.summary.FileWriter('logs/', sess.graph)  # 写入logs文件
@@ -93,7 +94,7 @@ if __name__ == '__main__':
                 # print(type(X), type(labels))
                 stepts += 1
                 feed_dict = {
-                    Model.inputs: X,
+                    Model.inputs: X[..., 0],
                     Model.label_input: labels,
                     Model.training: 1,
                 }                               # 输入数据填充占位

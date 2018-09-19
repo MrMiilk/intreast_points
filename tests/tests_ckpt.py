@@ -28,7 +28,7 @@ def get_batch():
 
 if __name__ == '__main__':
     tf.reset_default_graph()
-    input_shape = [None, 240, 320, 3]
+    input_shape = [None, 240, 320, 1]
     label_shape = [None, 240, 320, 1]
     batch_size = 1
     ckpt_name = 'checkpoints/-15000'
@@ -41,7 +41,7 @@ if __name__ == '__main__':
         loss = 0.
         for X, label, idx, type_, gray_img in get_batch():
             feed_dict = {
-                Model.inputs: X,
+                Model.inputs: X[..., 0],
                 Model.label_input: label,
                 Model.training: 0,
             }
@@ -51,6 +51,7 @@ if __name__ == '__main__':
             point_position = point_position.reshape(240, 320)  # Atention, only for one picture
             point_position = np.vstack(np.nonzero(point_position)).T
             for point in point_position:
+                point = point[1], point[0]
                 cv2.circle(gray_img, tuple(point), 0, (1,))
             if not os.path.exists('./imgs/' + type_):
                 os.makedirs('./imgs/' + type_)
