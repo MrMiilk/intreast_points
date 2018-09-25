@@ -27,7 +27,6 @@ class Magic_point(Basic_model):
                 if layer[l] == 'conv':
                     needs = [20+l, self.initializer, self.training]
                     x = conv_block(x, config[l], needs)
-        x = tf.nn.softmax(x, axis=-1)
         self.decoder_output = x
 
     def reshape_output(self, config=default_reshape_config):
@@ -37,6 +36,7 @@ class Magic_point(Basic_model):
             res = x == sign
             return np.array(res, dtype=np.float32)
         x = self.decoder_output
+        x = tf.nn.softmax(x, axis=-1)
         with tf.name_scope('Reshape_output'):
             # x = tf.nn.softmax(x, axis=-1)
             x = tf.py_func(func_, [x], tf.float32)
