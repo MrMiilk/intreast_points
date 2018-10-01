@@ -48,11 +48,11 @@ if __name__ == '__main__':
             point_position, loss_now = sess.run((Model.point_position, Model.loss), feed_dict=feed_dict)
             ##save point position##
             # np.save('./test_outputs/' + type_ + str(idx) + '.npy', point_position)
-            point_position = point_position.reshape(240, 320)  # Atention, only for one picture
+            # point_position = point_position.reshape(240, 320)  # Atention, only for one picture
             point_position = np.vstack(np.nonzero(point_position)).T
             for point in point_position:
-                point = point[1], point[0]
-                cv2.circle(gray_img, tuple(point), 0, (1,))
+                point = point[1], point[2]
+                cv2.circle(gray_img, tuple(point), 0, (1,1,1))
             if not os.path.exists('./imgs/' + type_):
                 os.makedirs('./imgs/' + type_)
             cv2.imwrite('./imgs/' + type_ + '/' + '{}.png'.format(idx), gray_img)

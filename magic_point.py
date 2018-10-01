@@ -9,11 +9,11 @@ class Magic_point(Basic_model):
     default_decoder_layer = ['conv', 'conv']
     default_decoder_config = [
         [
-            [(3, 3, 128, 265), (265,)],
+            [(3, 3, 128, 256), (256,)],
             ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
         [
-            [(1, 1, 265, 65), (65,)],
+            [(1, 1, 256, 65), (65,)],
             ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
     ]
@@ -78,7 +78,7 @@ if __name__ == '__main__':
     label_shape = [None, 240, 320, 1]
     epoch = 2000                      # 迭代的epoch
     batch_size = 14
-    lr = 0.00001
+    lr = 0.0001
     opt = 'adam'
 
     Model = Magic_point()
@@ -88,8 +88,8 @@ if __name__ == '__main__':
         sess.run(tf.initialize_all_variables())                  # 初始化网络
         merged = tf.summary.merge_all()
         writer = tf.summary.FileWriter('logs/', sess.graph)  # 写入logs文件
-        saver = tf.train.Saver(max_to_keep=2)
-        saver.restore(sess, tf.train.latest_checkpoint('checkpoints/'))
+        saver = tf.train.Saver(max_to_keep=4)
+        # saver.restore(sess, tf.train.latest_checkpoint('checkpoints/'))
         stepts = 0
         for i in range(epoch):                                   # 迭代
             for X, labels in get_batch(batch_size, 1000):
