@@ -9,7 +9,8 @@ def get_batch(batch_size, iter=100, img_p=IMAGE_PATH, pot_p=POINT_PATH):
     """生成器提供数据输入
     角点位置有很多是小数，这里使用最近邻的整数作为角点位置
     """
-    type_lists = list(os.listdir(SYMTHETIC_FILE_PATH))
+    #type_lists = list(os.listdir(SYMTHETIC_FILE_PATH))
+    type_lists = ['draw_cube', 'draw_lines']
     class_per_time = 2
     num_types = len(type_lists)
     num_batches = 10000//batch_size

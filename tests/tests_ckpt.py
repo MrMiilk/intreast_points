@@ -31,7 +31,7 @@ if __name__ == '__main__':
     input_shape = [None, 240, 320, 1]
     label_shape = [None, 240, 320, 1]
     batch_size = 1
-    ckpt_name = 'checkpoints/-15000'
+    ckpt_name = 'checkpoints/-3000'
     Model = Magic_point()
     saver = tf.train.Saver()
     Model.model(input_shape, label_shape, opt='adam', lr=0.001, training=False)

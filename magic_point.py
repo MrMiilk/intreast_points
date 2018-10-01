@@ -76,9 +76,9 @@ if __name__ == '__main__':
     '''Magic Point运行检测'''
     input_shape = [None, 240, 320, 1]
     label_shape = [None, 240, 320, 1]
-    epoch = 1000                      # 迭代的epoch
+    epoch = 2000                      # 迭代的epoch
     batch_size = 14
-    lr = 0.001
+    lr = 0.00001
     opt = 'adam'
 
     Model = Magic_point()
@@ -89,6 +89,7 @@ if __name__ == '__main__':
         merged = tf.summary.merge_all()
         writer = tf.summary.FileWriter('logs/', sess.graph)  # 写入logs文件
         saver = tf.train.Saver(max_to_keep=2)
+        saver.restore(sess, tf.train.latest_checkpoint('checkpoints/'))
         stepts = 0
         for i in range(epoch):                                   # 迭代
             for X, labels in get_batch(batch_size, 1000):

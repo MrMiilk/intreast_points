@@ -13,7 +13,7 @@ class Basic_model():
     default_encoder_config = [
         [#block
             #for variable_param
-            [(3, 3, 3, 64), (64,)],
+            [(3, 3, 1, 64), (64,)],
             #for layer_param
             ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
