@@ -49,7 +49,7 @@ class Magic_point(Basic_model):
         '''定义损失函数计算，Lp需要修改'''
         with tf.name_scope('Loss'):
             H, W = self.H_W
-            self.loss = (1. / W * H) * tf.reduce_sum(self.Lp(self.decoder_output, self.label))
+            self.loss = (64. / W * H) * tf.reduce_sum(self.Lp(self.decoder_output, self.label))
             tf.summary.scalar('Loss', self.loss)
         return
 
@@ -89,14 +89,14 @@ if __name__ == '__main__':
         merged = tf.summary.merge_all()
         writer = tf.summary.FileWriter('logs/', sess.graph)  # 写入logs文件
         saver = tf.train.Saver(max_to_keep=4)
-        # saver.restore(sess, tf.train.latest_checkpoint('checkpoints/'))
+        saver.restore(sess, tf.train.latest_checkpoint('checkpoints/'))
         stepts = 0
         for i in range(epoch):                                   # 迭代
             for X, labels in get_batch(batch_size, 1000):
                 # print(type(X), type(labels))
                 stepts += 1
                 feed_dict = {
-                    Model.inputs: np.expand_dims(X[..., 0], axis=-1),
+                    Model.inputs: X,
                     Model.label_input: labels,
                     Model.training: 1,
                 }                               # 输入数据填充占位

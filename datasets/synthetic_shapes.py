@@ -19,7 +19,7 @@ def get_batch(batch_size, iter=100, img_p=IMAGE_PATH, pot_p=POINT_PATH):
         np.random.shuffle(idxs)
         idxs = idxs.reshape((num_batches, -1))
         lab = np.zeros((batch_size * class_per_time, H, W, C))
-        X = np.zeros((batch_size * class_per_time, H, W, 3))
+        X = np.zeros((batch_size * class_per_time, H, W, 1))
         for i in range(num_types // class_per_time):
             type_list = type_lists[i * class_per_time:i * class_per_time+2]
             for j in range(num_batches):
@@ -35,7 +35,7 @@ def get_batch(batch_size, iter=100, img_p=IMAGE_PATH, pot_p=POINT_PATH):
                                 cv2.circle(img, tuple(point), 0, (1,))
                         grayImage = cv2.imread(img_path)
                         lab[i * idx_t] = img
-                        X[i * idx_t] = grayImage
+                        X[i * idx_t, ..., 0] = grayImage[..., 0]
                         # cv2.imshow('', img)
                         # cv2.waitKey()
                 yield X, lab
