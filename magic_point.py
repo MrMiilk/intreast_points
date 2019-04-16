@@ -9,11 +9,11 @@ class Magic_point(Basic_model):
     default_decoder_layer = ['conv', 'conv']
     default_decoder_config = [
         [
-            [(3, 3, 128, 265), (265,)],
+            [(3, 3, 128, 256), (256,)],
             ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
         [
-            [(1, 1, 265, 65), (65,)],
+            [(1, 1, 256, 65), (65,)],
             ['relu', (1, 1, 1, 1), 'SAME', True]
         ],
     ]
@@ -49,7 +49,7 @@ class Magic_point(Basic_model):
         '''定义损失函数计算，Lp需要修改'''
         with tf.name_scope('Loss'):
             H, W = self.H_W
-            self.loss = (1. / W * H) * tf.reduce_sum(self.Lp(self.decoder_output, self.label))
+            self.loss = (64. / W * H) * tf.reduce_sum(self.Lp(self.decoder_output, self.label))
             tf.summary.scalar('Loss', self.loss)
         return
 
@@ -76,9 +76,9 @@ if __name__ == '__main__':
     '''Magic Point运行检测'''
     input_shape = [None, 240, 320, 1]
     label_shape = [None, 240, 320, 1]
-    epoch = 1000                      # 迭代的epoch
+    epoch = 2000                      # 迭代的epoch
     batch_size = 14
-    lr = 0.001
+    lr = 0.0001
     opt = 'adam'
 
     Model = Magic_point()
@@ -88,14 +88,15 @@ if __name__ == '__main__':
         sess.run(tf.initialize_all_variables())                  # 初始化网络
         merged = tf.summary.merge_all()
         writer = tf.summary.FileWriter('logs/', sess.graph)  # 写入logs文件
-        saver = tf.train.Saver(max_to_keep=2)
+        saver = tf.train.Saver(max_to_keep=4)
+        saver.restore(sess, tf.train.latest_checkpoint('checkpoints/'))
         stepts = 0
         for i in range(epoch):                                   # 迭代
             for X, labels in get_batch(batch_size, 1000):
                 # print(type(X), type(labels))
                 stepts += 1
                 feed_dict = {
-                    Model.inputs: np.expand_dims(X[..., 0], axis=-1),
+                    Model.inputs: X,
                     Model.label_input: labels,
                     Model.training: 1,
                 }                               # 输入数据填充占位

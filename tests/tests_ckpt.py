@@ -8,7 +8,7 @@ from magic_point import *
 
 def get_batch():
     type_lists = list(os.listdir(SYMTHETIC_FILE_PATH))
-    X = np.zeros((1, H, W, 3))
+    X = np.zeros((1, H, W, 1))
     Label = np.zeros((1, H, W, C))
     for type_ in type_lists:
         basic_dir = SYMTHETIC_FILE_PATH + '/' + type_
@@ -21,7 +21,7 @@ def get_batch():
                 for point in points:
                     cv2.circle(img, tuple(point), 0, (1,))
             grayImage = cv2.imread(img_path)
-            X[0] = grayImage
+            X[0, ..., 0] = grayImage[..., 0]
             Label[0] = img
             yield X, Label, idx, type_, grayImage
 
@@ -31,7 +31,7 @@ if __name__ == '__main__':
     input_shape = [None, 240, 320, 1]
     label_shape = [None, 240, 320, 1]
     batch_size = 1
-    ckpt_name = 'checkpoints/-15000'
+    ckpt_name = 'checkpoints/-3000'
     Model = Magic_point()
     saver = tf.train.Saver()
     Model.model(input_shape, label_shape, opt='adam', lr=0.001, training=False)
@@ -41,18 +41,18 @@ if __name__ == '__main__':
         loss = 0.
         for X, label, idx, type_, gray_img in get_batch():
             feed_dict = {
-                Model.inputs: np.expand_dims(X[..., 0], axis=-1),
+                Model.inputs: X,
                 Model.label_input: label,
                 Model.training: 0,
             }
             point_position, loss_now = sess.run((Model.point_position, Model.loss), feed_dict=feed_dict)
             ##save point position##
             # np.save('./test_outputs/' + type_ + str(idx) + '.npy', point_position)
-            point_position = point_position.reshape(240, 320)  # Atention, only for one picture
+            # point_position = point_position.reshape(240, 320)  # Atention, only for one picture
             point_position = np.vstack(np.nonzero(point_position)).T
             for point in point_position:
-                point = point[1], point[0]
-                cv2.circle(gray_img, tuple(point), 0, (1,))
+                point = point[2], point[1]
+                cv2.circle(gray_img, tuple(point), 0, (1,1,1))
             if not os.path.exists('./imgs/' + type_):
                 os.makedirs('./imgs/' + type_)
             cv2.imwrite('./imgs/' + type_ + '/' + '{}.png'.format(idx), gray_img)
